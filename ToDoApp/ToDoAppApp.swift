@@ -13,7 +13,11 @@ struct ToDoAppApp: App {
     let persistenceController = PersistenceController.shared
     let notificationManager = NotificationManager() // pour notification
 
+    init() {
 
+        setupNotifications()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

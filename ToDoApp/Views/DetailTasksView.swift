@@ -6,16 +6,12 @@
 //
 import SwiftUI
 
-
-
-
-
 struct DetailTasksView: View {
-    private let url = URL(string: "https://www.task.com")!
-    
-    var newItem : Item
-    
-    
+  
+    @ObservedObject var newItem : Item
+    @Environment(\.managedObjectContext) private var viewContext
+  
+
     var body: some View {
         
         ZStack{
@@ -28,7 +24,8 @@ struct DetailTasksView: View {
             VStack {
                 Form{
                     Text(newItem.name ?? "")
-                      //  .foregroundColor(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
+                        .foregroundColor(Color.brown)
+                        .bold()
                         .font(.title)
                         .fontWeight(.heavy)
                         .padding()
@@ -36,30 +33,36 @@ struct DetailTasksView: View {
                     
                     HStack{
                         Image(systemName: "flag.fill")
-                        Text(":  \(newItem.priority ?? "")")
-                        //     .foregroundColor(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
+                            .foregroundColor(.brown)
+                        Text("   \(newItem.priority ?? "")")
                             .italic()
                             .font(.callout)
                             .padding()
+                            .foregroundColor(.brown)
+                            .bold()
                     }.listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
                     HStack{
                         Image(systemName: "alarm.fill")
-                        Text(":   \(newItem.completeDate!, formatter: itemFormatter)")
+                            .foregroundColor(.brown)
+                        
+                        Text("    \(newItem.completeDate!, formatter: itemFormatter)")
                             .foregroundColor(.brown)
                             .bold()
                             .lineSpacing(8)
                             .padding()
                             .multilineTextAlignment(.center)
-                            
+                            .bold()
                         
                     }.listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
                     HStack{
                         Image(systemName: "note.text")
-                        Text(":  \(newItem.pitch ?? "")")
-                        //     .foregroundColor(.white)
+                            .foregroundColor(.brown)
+                        Text("   \(newItem.pitch ?? "")")
+                            .foregroundColor(.brown)
                             .lineSpacing(8)
                             .padding()
                             .multilineTextAlignment(.center)
+                            .bold()
                         
                     } .listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
                     
@@ -67,36 +70,35 @@ struct DetailTasksView: View {
                    
                     Spacer()
                     
-                    
-                    
-                    ShareLink(item: url)
+                ShareLink(item: (newItem.name ?? ""))
+                
                         .bold()
-                    
                         .padding()
                 }
+            
+            
+//            ToolbarItem(placement: .navigationBarTrailing) {
+//                NavigationLink(destination: {
+//                     UpdateTaskView(newItem: item)
+//                }, label: {
+//                    Image(systemName: "pencil")
+//                        .foregroundColor(.accentColor)
+//                })
+//            }
+//
+            
             }
             
             
         }
     }
 
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
-
-
 struct DetailTasksView_Previews: PreviewProvider {
     static let persistence = PersistenceController.preview
     static var item: Item = {
         let context = persistence.container.viewContext
         let item = Item(context: context)
-        item.timestamp = Date()
-        item.completeDate = Date()
+        item.completeDate = Date.now
         item.priority = "urgent"
         item.name = "name"
         item.pitch = "pitch"

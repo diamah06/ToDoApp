@@ -21,11 +21,11 @@ extension Priority {
         
        switch self {
         case .urgent:
-           return "urgent"
+           return "Urgent"
         case .medium:
-            return "medium"
+            return "Medium"
         case .low:
-            return "low"
+            return "Low"
         }
     }
 }
@@ -39,9 +39,13 @@ struct AddTasksView: View {
     @State var name: String = ""
     @State var pitch: String=""
     @State var selectedPriority: Priority = .urgent
-    @State var completeDate = Date()
+    @State var completeDate = Date.now
     @State var isfinish: Bool = true
-   
+    @ObservedObject var taskVM = TaskViewModel()
+    
+    //pour test unit
+    
+    
     var body: some View {
         
         ZStack{
@@ -54,31 +58,39 @@ struct AddTasksView: View {
                     Section( header:
                                 
                                 Text("Task")
+                        .accessibilityIdentifier("Task")
                         .bold()
                         .font(.headline)
-                        .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))){
+                        .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
+                        .accessibilityLabel(/*@START_MENU_TOKEN@*/"Label"/*@END_MENU_TOKEN@*/)){
                             TextField("New Task", text: $name)
                                 .textFieldStyle(.roundedBorder)
                         }
+                        .accessibilityIdentifier("NewTaskTextField")
                         .textInputAutocapitalization(.never)
                     
                     // .textFieldStyle(OvalTextFieldStyle())
                     Section( header:
                                 
                                 Text("Description")
+                        .accessibilityIdentifier("Description")
                         .bold()
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))){
                             TextField("Description of task", text: $pitch)
                                 .textFieldStyle(.roundedBorder)
                         }
+                        .accessibilityIdentifier("DescTaskTextField")
                         .textInputAutocapitalization(.never)
                     Section( header:
                                 
                                 Text("Priority")
+                        .accessibilityIdentifier("Priority")
+                             
                         .bold()
                         .font(.headline)
-                        .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972)))
+                        .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
+                        .accessibilityLabel(/*@START_MENU_TOKEN@*/"Label"/*@END_MENU_TOKEN@*/))
                     {
                             Picker("Priority", selection: $selectedPriority){
                                 ForEach(Priority.allCases) { priority in
@@ -88,35 +100,46 @@ struct AddTasksView: View {
                                 
                             }.pickerStyle(.segmented)
                             .colorMultiply(.brown)
+                            .accessibilityIdentifier("Picker")
                         }
                     Section( header:
                                 
                                 Text("Date")
+                        .accessibilityIdentifier("Date")
                         .bold()
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))){
                             
-                    DatePicker("Start Date", selection: $completeDate)
-                            
+                    DatePicker("Date", selection: $completeDate, displayedComponents: .date)
+                    DatePicker("Time", selection: $completeDate, displayedComponents: .hourAndMinute)
+                                .accessibilityIdentifier("DatePicker")
                         }
-                     //   .datePickerStyle(.graphical)
+                    
+                    
+                    
+                    
+                        //.datePickerStyle(.graphical)
                         .datePickerStyle(GraphicalDatePickerStyle())
                     
                 }.scrollContentBackground(.hidden)
                 Button {
                     
-                    addItem()
+                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, isfinish: true, viewContext: viewContext)
+                    
+                    
                     dismiss()
                     
                 } label: {
                     Text("ADD")
+                        .accessibilityIdentifier("text")
                         .foregroundColor(.white)
                         .bold()
                         .frame(width: 300, height: 35)
                         .overlay(Capsule().stroke(LinearGradient(colors: [.brown, Color(hue: 0.2, saturation: 0.141, brightness: 0.972)], startPoint: .leading, endPoint: .trailing), lineWidth: 10))
+                       
                 }
-                
-                
+                .disabled(name.isEmpty)
+                .accessibilityIdentifier("ButtonAdd")
                 
             }
         }
@@ -125,26 +148,24 @@ struct AddTasksView: View {
         
         
         // fonction Add
-        private func addItem() {
-            withAnimation {
-                let newItem = Item(context: viewContext)
-                newItem.timestamp = Date()
-                newItem.name = name
-                newItem.priority = selectedPriority.rawValue
-                newItem.pitch = pitch
-                newItem.completeDate = Date()
-                newItem.isfinish = Bool()
+        // func addItem() {
+        //    withAnimation {
+        //        let newItem = Item(context: viewContext)
+         //       newItem.name = name
+          //      newItem.priority = selectedPriority.rawValue
+          //      newItem.pitch = pitch
+          //      newItem.completeDate = completeDate
+           //     newItem.isfinish = Bool()
                 
-                do {
-                    try viewContext.save()
-                } catch {
-                    // Replace this implementation with code to handle the error appropriately.
-                    // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    let nsError = error as NSError
-                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                }
-            }
-        }
+           //     do {
+            //        try viewContext.save()
+             //   } catch {
+                    
+              //      let nsError = error as NSError
+              //      fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+             //   }
+          //  }
+        //}
         
       //
         

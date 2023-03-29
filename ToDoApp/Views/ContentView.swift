@@ -10,9 +10,7 @@ import CoreData
 
 struct ContentView : View {
 
-   
-    
-   // let notificationManager : NotificationManager
+    @ObservedObject var taskVM2 = TaskViewModel()
     
     @Environment(\.managedObjectContext) private var viewContext
 
@@ -25,7 +23,7 @@ struct ContentView : View {
     @State var showModal = false
    //
     
-    let notificationManager = NotificationManager()
+    //let notificationManager = NotificationManager()
     
     //fonction styleForPropriority
     
@@ -44,10 +42,10 @@ struct ContentView : View {
         }
     }
     
-    ///
+   
     // fonction finish task
   
-    private func updateItem(_ item: Item) {
+    private func isfinishItem(_ item: Item) {
         item.isfinish = !item.isfinish
         
         do {
@@ -57,10 +55,7 @@ struct ContentView : View {
         }
     }
     
-    
-    
-    
-  
+    let notificationManager = NotificationManager()
     var body: some View {
         
         NavigationView {
@@ -72,9 +67,11 @@ struct ContentView : View {
                 VStack {
                     
                     HStack{
-                        Text("My Todo list ")
+                        Text("My Todo list")
+                            .accessibilityIdentifier("title")
                             .font(.title)
                             .foregroundColor(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
+                            .bold()
                         LottieView(lottieFile: "jaune")
                             .frame(width: 100, height: 70)
                         
@@ -82,13 +79,12 @@ struct ContentView : View {
                         
                     }
                     ZStack (alignment: .bottomTrailing) {
-                        List { 
+                        List {
                             
                             ForEach(items) { item in
                                 NavigationLink {
                                     DetailTasksView(newItem: item)
                                     
-                                    //  DetailTasksView()
                                     
                                 } label: {
                                     HStack{
@@ -98,23 +94,23 @@ struct ContentView : View {
                                             .frame(width: 15, height: 15)
                                         Spacer().frame(width: 20)
                                         
-                                        
-                                        
-                                      //  Text("\(item.order)")
-                                       //     .foregroundColor(.black)
-                                        Text(item.name ?? "")
-                                            .foregroundColor(.black)
-                                        
+                                        VStack(alignment: .leading, spacing: 5){
+                                            Text(item.name ?? "")
+                                                .bold()
+                                                .foregroundColor(.black)
+                                            
+                                           // Image(systemName: "alarm.fill")
+                                            Text(" Deadline: \(item.completeDate!, style: .date)")
+                                                .foregroundColor(.gray)
+                                                .italic()
+                                               // .fontWeight(.light)
+                                                .font(.subheadline)
+                                        }
                                       // fonction onapear
-                                        
-                                        
-                                            .onAppear {
+                                          .onAppear {
                                             scheduleNotification(date: item.completeDate!, itemContent:
-                                            "\(item.name!) le \(item.completeDate!) ")
+                                            "\(item.name!) le \(item.completeDate!) the due date of your task has arrived, go  ahead, you can do it")
                                                                                         }
-                                        
-                                        
-                                        
                                     //
                                         
                                         Spacer()
@@ -123,7 +119,7 @@ struct ContentView : View {
                                             .frame(width: 30, height: 30)
                                             .foregroundColor(.green)
                                             .onTapGesture {
-                                                updateItem(item)
+                                                isfinishItem(item)
                                             }
                                         
                                         
@@ -136,6 +132,7 @@ struct ContentView : View {
                             // OnDelete, OnMove
                             .onMove(perform: moveItems)
                             .onDelete(perform: deleteItems)
+                          //  .onDelete(perform:  taskVM2.deleteItems)
                             
                             .listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
                         }.scrollContentBackground(.hidden)
@@ -148,7 +145,9 @@ struct ContentView : View {
                                 
                             }
                         
-                            .navigationBarTitle("ToDo APP")
+                          //  .navigationBarTitle("ToDo APP")
+                          
+                          //  .accentColor(Color.red)
                         // .foregroundColor(.white)
                             .foregroundColor(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
                         
@@ -161,7 +160,7 @@ struct ContentView : View {
                                 .resizable()
                                 .frame(width:60, height: 60)
                                 .foregroundColor(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
-                                .shadow(color:.purple,radius: 0.6,x:1, y:1)
+                                .shadow(color:.black,radius: 0.6,x:1, y:1)
                             
                             
                         }
@@ -169,8 +168,9 @@ struct ContentView : View {
                             
                             AddTasksView()
                             
-                                .presentationDetents([.medium,.large]) //modifier la taille de sheet
+                             //   .presentationDetents([.medium,.large]) //modifier la taille de sheet
                         })
+                        .accessibilityIdentifier("showModalBtn")
                     }.padding()
                 }
             }
@@ -179,24 +179,22 @@ struct ContentView : View {
     }
     
     
-// fonction deleteItems
+ //fonction deleteItems
     private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+      withAnimation {
+           offsets.map { items[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
-            } catch {
+           } catch {
                 
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+           }
         }
     }
     
-    // Fin fonction delete
-    
-    
+    // fonction Notification
     private func scheduleNotification(date: Date, itemContent: String) {
         let notificationId = UUID()
         let content = UNMutableNotificationContent()
@@ -218,16 +216,10 @@ struct ContentView : View {
     }
     
     
+
+   
     
-    
-   // fonction pour alerte :
-    
-    
-    
-    
-    
-    
-    
+
     // fonction move
     private func moveItems(at
         sets:IndexSet, destination: Int) {
@@ -283,10 +275,11 @@ struct ContentView : View {
 
 
 
-private let itemFormatter: DateFormatter = {
+let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateStyle = .short
+    formatter.dateStyle = .medium
     formatter.timeStyle = .medium
+    
     return formatter
 }()
 

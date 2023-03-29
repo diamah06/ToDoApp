@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "587EA3A9-D7A2-41BB-B4D0-F8FB49C6CB6E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:ToDoApp.xcodeproj",
+      "identifier" : "53DE3A8729657FBB00B402AD",
+      "name" : "ToDoApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:ToDoApp.xcodeproj",
+        "identifier" : "5356AB1A29D4661300224792",
+        "name" : "ToDoAppTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:ToDoApp.xcodeproj",
+        "identifier" : "5356AB2729D4662B00224792",
+        "name" : "ToDoAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
