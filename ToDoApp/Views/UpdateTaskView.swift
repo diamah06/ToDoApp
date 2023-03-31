@@ -1,50 +1,26 @@
 //
-//  AddTasksView.swift
+//  UpdateTaskView.swift
 //  ToDoApp
 //
-//  Created by Mahdia Amriou on 04/01/2023.
+//  Created by Mahdia Amriou on 31/03/2023.
 //
 
 import SwiftUI
 
-enum Priority: String, CaseIterable, Identifiable {
-    
-    var id: UUID {
-        return UUID()
-    }
-    case urgent, medium, low
-}
-
-extension Priority {
-    
-    var name : String {
-        
-       switch self {
-        case .urgent:
-           return "Urgent"
-        case .medium:
-            return "Medium"
-        case .low:
-            return "Low"
-        }
-    }
-}
-
-
-struct AddTasksView: View {
-    
-    @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.dismiss) var dismiss
+struct UpdateTaskView: View {
     
     @State var name: String = ""
     @State var pitch: String=""
     @State var selectedPriority: Priority = .urgent
     @State var completeDate = Date.now
     @State var isfinish: Bool = true
-    @ObservedObject var taskVM = TaskViewModel()
     
-    //pour test unit
+    @ObservedObject var newItem : Item
+    @Environment(\.dismiss) var dismiss
+
     
+    @Environment(\.managedObjectContext) private var viewContext
+    @ObservedObject var vm = TaskViewModel()
     
     var body: some View {
         
@@ -53,7 +29,9 @@ struct AddTasksView: View {
             Image("black.jpg")
                 .resizable()
                 .ignoresSafeArea()
-            VStack{
+            
+            
+            VStack {
                 Form {
                     Section( header:
                                 
@@ -62,7 +40,7 @@ struct AddTasksView: View {
                         .bold()
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
-                        .accessibilityLabel(/*@START_MENU_TOKEN@*/"Label"/*@END_MENU_TOKEN@*/)){
+                        .accessibilityLabel("Label")){
                             TextField("New Task", text: $name)
                                 .textFieldStyle(.roundedBorder)
                         }
@@ -90,18 +68,18 @@ struct AddTasksView: View {
                         .bold()
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
-                        .accessibilityLabel(/*@START_MENU_TOKEN@*/"Label"/*@END_MENU_TOKEN@*/))
+                        .accessibilityLabel("Label"))
                     {
-                            Picker("Priority", selection: $selectedPriority){
-                                ForEach(Priority.allCases) { priority in
-                                    Text(priority.name).tag(priority)
-                                    
-                                }
+                        Picker("Priority", selection: $selectedPriority){
+                            ForEach(Priority.allCases) { priority in
+                                Text(priority.name).tag(priority)
                                 
-                            }.pickerStyle(.segmented)
+                            }
+                            
+                        }.pickerStyle(.segmented)
                             .colorMultiply(.brown)
                             .accessibilityIdentifier("Picker")
-                        }
+                    }
                     Section( header:
                                 
                                 Text("Date")
@@ -110,44 +88,57 @@ struct AddTasksView: View {
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))){
                             
-                    DatePicker("Date", selection: $completeDate,in: Date()..., displayedComponents: .date)
-                    DatePicker("Time", selection: $completeDate, displayedComponents: .hourAndMinute)
+                            DatePicker("Date", selection: $completeDate,in: Date()..., displayedComponents: .date)
+                            DatePicker("Time", selection: $completeDate, displayedComponents: .hourAndMinute)
                             
                                 .accessibilityIdentifier("DatePicker")
-                       }
+                        }
                         .datePickerStyle(GraphicalDatePickerStyle())
                     
                 }.scrollContentBackground(.hidden)
                 Button {
                     
-                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, isfinish: true, viewContext: viewContext)
+                    vm.updateItem(item: newItem, name: name , pitch:pitch, selectedPriority: selectedPriority, completeDate: Date.now, isfinish: true, viewContext: viewContext)
                     
                     
                     dismiss()
                     
                 } label: {
-                    Text("ADD")
+                    Text("Update")
                         .accessibilityIdentifier("text")
                         .foregroundColor(.white)
                         .bold()
                         .frame(width: 300, height: 35)
                         .overlay(Capsule().stroke(LinearGradient(colors: [.brown, Color(hue: 0.2, saturation: 0.141, brightness: 0.972)], startPoint: .leading, endPoint: .trailing), lineWidth: 10))
-                       
+                    
                 }
-                .disabled(name.isEmpty)
-                .accessibilityIdentifier("ButtonAdd")
-                
             }
+            
+            
+            //
+            
+            
         }
         
-    }
-        
         
     }
-    
-    struct AddTasksView_Previews: PreviewProvider {
-        static var previews: some View {
-            AddTasksView()
-        }
-    }
+}
 
+struct UpdateTaskView_Previews: PreviewProvider {
+    static let persistence = PersistenceController.preview
+    static var item: Item = {
+        let context = persistence.container.viewContext
+        let item = Item(context: context)
+        item.completeDate = Date.now
+        item.priority = "urgent"
+        item.name = "name"
+        item.pitch = "pitch"
+        item.isfinish = true
+        return item
+    }()
+    
+    static var previews: some View {
+        UpdateTaskView(newItem: item)
+            .environment(\.managedObjectContext, persistence.container.viewContext)
+    }
+}

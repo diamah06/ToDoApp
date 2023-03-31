@@ -9,6 +9,8 @@ import SwiftUI
 struct DetailTasksView: View {
   
     @ObservedObject var newItem : Item
+   
+    
     @Environment(\.managedObjectContext) private var viewContext
   
 
@@ -77,16 +79,18 @@ struct DetailTasksView: View {
                 }
             
             
-//            ToolbarItem(placement: .navigationBarTrailing) {
-//                NavigationLink(destination: {
-//                     UpdateTaskView(newItem: item)
-//                }, label: {
-//                    Image(systemName: "pencil")
-//                        .foregroundColor(.accentColor)
-//                })
-//            }
-//
+           
             
+            }.toolbar {
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: {
+                        UpdateTaskView(newItem: newItem)
+                    }, label: {
+                        Image(systemName: "pencil")
+                            .foregroundColor(.accentColor)
+                    })
+                }
             }
             
             

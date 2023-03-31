@@ -56,6 +56,7 @@ struct ContentView : View {
     }
     
     let notificationManager = NotificationManager()
+    
     var body: some View {
         
         NavigationView {

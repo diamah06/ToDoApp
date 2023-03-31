@@ -38,16 +38,17 @@ import SwiftUI
     init() {}
     
     // fonction Add
-    func addItem(name: String,pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext) -> Item {
+    func addItem(name: String,pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext)  {
         
         withAnimation {
             
             let newItem = Item(context: viewContext)
+            
             newItem.name = name
             newItem.priority = selectedPriority.rawValue
             newItem.pitch = pitch
             newItem.completeDate = completeDate
-            newItem.isfinish = Bool()
+            newItem.isfinish = isfinish
             
             do {
                 try viewContext.save()
@@ -56,11 +57,34 @@ import SwiftUI
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
-            return newItem
+            return 
         }
         
     }
-    
+    func updateItem(item:Item, name: String, pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext) {
+        
+        withAnimation {
+            
+           // let newItem = Item(context: viewContext)
+            
+           
+            item.name = name
+            item.priority = selectedPriority.rawValue
+            item.pitch = pitch
+            item.completeDate = completeDate
+            item.isfinish = isfinish
+            
+            do {
+                try viewContext.save()
+            } catch {
+                
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+            return
+        }
+        
+    }
     // fonction deleteItems
           func deleteItems(offsets: IndexSet) {
             withAnimation {
