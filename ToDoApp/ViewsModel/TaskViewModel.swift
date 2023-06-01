@@ -22,7 +22,7 @@ import SwiftUI
     @Published var updatepitch: String=""
     @Published var updateselectedPriority: Priority = .urgent
     @Published var updatecompleteDate = Date.now
-    
+    @Published var notifId = ""
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath:
@@ -37,37 +37,57 @@ import SwiftUI
     
     init() {}
     
-    // fonction Add
-    func addItem(name: String,pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext)  {
-        
+    
+    func addItem(name: String, pitch: String, selectedPriority: Priority, completeDate: Date, notifId: String, isfinish: Bool, viewContext: NSManagedObjectContext) -> Item {
         withAnimation {
             
             let newItem = Item(context: viewContext)
-            
             newItem.name = name
             newItem.priority = selectedPriority.rawValue
             newItem.pitch = pitch
             newItem.completeDate = completeDate
             newItem.isfinish = isfinish
-            
+            newItem.notifId = notifId
+            print("ID DE NOTIF \(newItem.notifId ?? "")")
             do {
                 try viewContext.save()
             } catch {
-                
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
-            return 
+            return newItem
         }
-        
     }
-    func updateItem(item:Item, name: String, pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext) {
-        
+    
+    // fonction Add
+//    func addItem(name: String, pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, viewContext: NSManagedObjectContext)  {
+//
+//        withAnimation {
+//
+//            let newItem = Item(context: viewContext)
+//
+//            newItem.name = name
+//            newItem.priority = selectedPriority.rawValue
+//            newItem.pitch = pitch
+//            newItem.completeDate = completeDate
+//            newItem.isfinish = isfinish
+//
+//            do {
+//                try viewContext.save()
+//            } catch {
+//
+//                let nsError = error as NSError
+//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+//            }
+//            return
+//        }
+//
+//    }
+    
+    
+    func updateItem(item:Item, name: String, pitch: String, selectedPriority: Priority, completeDate: Date, isfinish: Bool, notifId: String, viewContext: NSManagedObjectContext) {
+        notificationManager.removePendingNotification(id: notifId)
         withAnimation {
-            
-           // let newItem = Item(context: viewContext)
-            
-           
             item.name = name
             item.priority = selectedPriority.rawValue
             item.pitch = pitch
@@ -86,7 +106,8 @@ import SwiftUI
         
     }
     // fonction deleteItems
-          func deleteItems(offsets: IndexSet) {
+    func deleteItems(offsets: IndexSet, notifId: String) {
+        notificationManager.removePendingNotification(id: notifId)
             withAnimation {
                 offsets.map {items[$0] }.forEach(viewContext.delete)
 
@@ -100,14 +121,37 @@ import SwiftUI
             }
         }
   // function Update task
-    func updateTask() {
-        
-        do {
-            try viewContext.save()
-        }
-        catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError.localizedDescription), \(nsError.userInfo)")
-        }
+//    func updateTask() {
+//
+//        do {
+//            try viewContext.save()
+//        }
+//        catch {
+//            let nsError = error as NSError
+//            fatalError("Unresolved error \(nsError.localizedDescription), \(nsError.userInfo)")
+//        }
+//    }
+    // fonction Notification
+     func scheduleNotification(date: Date, title: String) -> String {
+         let notificationId = UUID().uuidString
+        let content = UNMutableNotificationContent()
+        content.title = "New notification \(title)"
+        content.sound = UNNotificationSound.default
+        content.userInfo = [
+            "notificationId": "\(notificationId)" // additional info to parse if need
+        ]
+
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: NotificationHelper.getTriggerDate(triggerDate: date)!,
+                repeats: false
+        )
+
+        notificationManager.scheduleNotification(
+                id: "\(notificationId)",
+                content: content,
+                trigger: trigger)
+         
+         return notificationId
     }
+  
 }

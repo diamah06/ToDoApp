@@ -108,10 +108,10 @@ struct ContentView : View {
                                                 .font(.subheadline)
                                         }
                                       // fonction onapear
-                                          .onAppear {
-                                            scheduleNotification(date: item.completeDate!, itemContent:
-                                            "\(item.name!) le \(item.completeDate!) the due date of your task has arrived, go  ahead, you can do it")
-                                                                                        }
+//                                          .onAppear {
+//                                              taskVM2.scheduleNotification(date: item.completeDate!, itemContent:
+//                                            "\(item.name!) le \(item.completeDate!) the due date of your task has arrived, go  ahead, you can do it")
+//                                                                                        }
                                     //
                                         
                                         Spacer()
@@ -132,7 +132,12 @@ struct ContentView : View {
                             
                             // OnDelete, OnMove
                             .onMove(perform: moveItems)
-                            .onDelete(perform: deleteItems)
+                            .onDelete(perform: { indexSet in
+                                deleteItems(offsets: indexSet, notifId: taskVM2.notifId)
+                            }
+                                      
+                           )
+                                
                           //  .onDelete(perform:  taskVM2.deleteItems)
                             
                             .listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
@@ -180,41 +185,38 @@ struct ContentView : View {
     }
     
     
- //fonction deleteItems
-    private func deleteItems(offsets: IndexSet) {
-      withAnimation {
-           offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-           } catch {
-                
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-           }
-        }
-    }
     
-    // fonction Notification
-    private func scheduleNotification(date: Date, itemContent: String) {
-        let notificationId = UUID()
-        let content = UNMutableNotificationContent()
-        content.body = "New notification \(itemContent)"
-        content.sound = UNNotificationSound.default
-        content.userInfo = [
-            "notificationId": "\(notificationId)" // additional info to parse if need
-        ]
+    func deleteItems(offsets: IndexSet, notifId: String) {
+        notificationManager.removePendingNotification(id: notifId)
+            withAnimation {
+                offsets.map {items[$0] }.forEach(viewContext.delete)
 
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: NotificationHelper.getTriggerDate(triggerDate: date)!,
-                repeats: false
-        )
-
-        notificationManager.scheduleNotification(
-                id: "\(notificationId)",
-                content: content,
-                trigger: trigger)
-    }
+                do {
+                    try viewContext.save()
+                } catch {
+                    
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                }
+            }
+        }
+    
+ //fonction deleteItems
+//    private func deleteItems(offsets: IndexSet) {
+//      withAnimation {
+//           offsets.map { items[$0] }.forEach(viewContext.delete)
+//
+//            do {
+//                try viewContext.save()
+//           } catch {
+//
+//                let nsError = error as NSError
+//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+//           }
+//        }
+//    }
+    
+    
     
     
 

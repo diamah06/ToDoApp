@@ -20,7 +20,8 @@ struct PersistenceController {
             newItem.priority = "urgent"
             newItem.name = "name"
             newItem.pitch = "pitch"
-            newItem.isfinish = true 
+            newItem.isfinish = true
+           
         }
         do {
             try viewContext.save()

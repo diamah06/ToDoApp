@@ -120,8 +120,8 @@ struct AddTasksView: View {
                 }.scrollContentBackground(.hidden)
                 Button {
                     
-                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, isfinish: true, viewContext: viewContext)
-                    
+                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, notifId: taskVM.notifId, isfinish: true, viewContext: viewContext)
+                    taskVM.notifId = taskVM.scheduleNotification(date: completeDate, title: name)
                     
                     dismiss()
                     
