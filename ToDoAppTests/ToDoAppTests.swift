@@ -20,41 +20,41 @@ final class ToDoListTests: XCTestCase {
     
 
     func testAddItem() throws {
-        
+
         let name = "Task 1"
         let pitch = "description"
         let priority = Priority.medium
         let date = Date.now
        // let isfinish = false
-        
-        
-        let item = vm.addItem(name: name,pitch: pitch, selectedPriority: priority, completeDate: date, isfinish: false, viewContext: viewContext)
-        
+
+
+        let item = vm.addItem(name: name,pitch: pitch, selectedPriority: priority, completeDate: date, notifId: vm.notifId, isfinish: false, viewContext: viewContext)
+
         XCTAssertEqual(item.name, name)
         XCTAssertEqual(item.pitch, pitch)
         XCTAssertEqual(item.priority, Priority.medium.rawValue)
         XCTAssertEqual(item.isfinish, false)
         XCTAssertEqual(item.completeDate, date)
-        
+
     }
     
     func testDeleteItem() throws {
-        
+
         let name = "Task 1"
         let pitch = "description"
         let priority = Priority.medium
         let date = Date.now
        // let isfinish = false
-        
-        
-        let item = vm.addItem(name: name,pitch: pitch, selectedPriority: priority, completeDate: date, isfinish: false, viewContext: viewContext)
-        
+
+
+        let item = vm.addItem(name: name,pitch: pitch, selectedPriority: priority, completeDate: date, notifId: vm.notifId, isfinish: false, viewContext: viewContext)
+
         XCTAssertEqual(item.name, name)
         XCTAssertEqual(item.pitch, pitch)
         XCTAssertEqual(item.priority, Priority.medium.rawValue)
         XCTAssertEqual(item.isfinish, false)
         XCTAssertEqual(item.completeDate, date)
-        
+
     }
 
 

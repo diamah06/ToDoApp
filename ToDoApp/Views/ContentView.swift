@@ -18,6 +18,7 @@ struct ContentView : View {
         sortDescriptors: [NSSortDescriptor(keyPath:
                          \Item.order, ascending: true)],
         animation: .default)
+    
     private var items: FetchedResults<Item>
     
     @State var showModal = false
@@ -107,15 +108,15 @@ struct ContentView : View {
                                                // .fontWeight(.light)
                                                 .font(.subheadline)
                                         }
-                                      // fonction onapear
+//                                     //  fonction onapear
 //                                          .onAppear {
 //                                              taskVM2.scheduleNotification(date: item.completeDate!, itemContent:
 //                                            "\(item.name!) le \(item.completeDate!) the due date of your task has arrived, go  ahead, you can do it")
 //                                                                                        }
-                                    //
+//                                    
                                         
                                         Spacer()
-                                        Image(systemName: item.isfinish ? "checkmark.square.fill": "square")
+                                        Image(systemName: item.isfinish ? "square": "checkmark.square.fill")
                                             .resizable()
                                             .frame(width: 30, height: 30)
                                             .foregroundColor(.green)
@@ -137,7 +138,6 @@ struct ContentView : View {
                             }
                                       
                            )
-                                
                           //  .onDelete(perform:  taskVM2.deleteItems)
                             
                             .listRowBackground(Color(hue: 0.086, saturation: 0.141, brightness: 0.972))
@@ -187,10 +187,18 @@ struct ContentView : View {
     
     
     func deleteItems(offsets: IndexSet, notifId: String) {
-        notificationManager.removePendingNotification(id: notifId)
+       
             withAnimation {
+                
+               //let item = offsets.map {items[$0] }
+               // print(item.first!.notifId)
+               
+        
+                offsets.map { items[$0] }.forEach { item in
+                    notificationManager.removePendingNotification(id: item.notifId ?? "")
+                }
+                
                 offsets.map {items[$0] }.forEach(viewContext.delete)
-
                 do {
                     try viewContext.save()
                 } catch {
@@ -202,19 +210,19 @@ struct ContentView : View {
         }
     
  //fonction deleteItems
-//    private func deleteItems(offsets: IndexSet) {
-//      withAnimation {
-//           offsets.map { items[$0] }.forEach(viewContext.delete)
-//
-//            do {
-//                try viewContext.save()
-//           } catch {
-//
-//                let nsError = error as NSError
-//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-//           }
-//        }
-//    }
+    private func deleteItems(offsets: IndexSet) {
+      withAnimation {
+           offsets.map { items[$0] }.forEach(viewContext.delete)
+
+            do {
+                try viewContext.save()
+           } catch {
+
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+           }
+        }
+    }
     
     
     

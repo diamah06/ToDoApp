@@ -72,7 +72,14 @@ struct DetailTasksView: View {
                    
                     Spacer()
                     
-                ShareLink(item: (newItem.name ?? ""))
+               // ShareLink(item: (newItem.name ?? ""))
+                
+                ShareLink(item: "Hey ! I share my new todo! \(String(describing: newItem.name)). It's \(String(describing: newItem.completeDate))")
+                
+//                    .swipeActions(edge: .leading) {
+//                        ShareLink(item: "Je te partage ma nouvelle Todo: \n\(newItem.name ?? "No title")\n\(newItem.completeDate, "No description")")
+//                    }
+                
                 
                         .bold()
                         .padding()
@@ -85,7 +92,8 @@ struct DetailTasksView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: {
-                        UpdateTaskView(newItem: newItem)
+                        UpdateTaskView(name: newItem.name!, pitch: newItem.pitch!, selectedPriority: Priority(rawValue: newItem.priority!) ?? .urgent, completeDate: newItem.completeDate!, isfinish: newItem.isfinish , newItem: newItem)
+                        
                     }, label: {
                         Image(systemName: "pencil")
                             .foregroundColor(.accentColor)

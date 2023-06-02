@@ -62,8 +62,8 @@ struct AddTasksView: View {
                         .bold()
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
-                        .accessibilityLabel(/*@START_MENU_TOKEN@*/"Label"/*@END_MENU_TOKEN@*/)){
-                            TextField("New Task", text: $name)
+                        .accessibilityLabel("Label")){
+                        TextField("New Task", text: $name)
                                 .textFieldStyle(.roundedBorder)
                         }
                         .accessibilityIdentifier("NewTaskTextField")
@@ -120,8 +120,8 @@ struct AddTasksView: View {
                 }.scrollContentBackground(.hidden)
                 Button {
                     
-                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, notifId: taskVM.notifId, isfinish: true, viewContext: viewContext)
-                    taskVM.notifId = taskVM.scheduleNotification(date: completeDate, title: name)
+                    taskVM.addItem(name: name,pitch: pitch, selectedPriority: selectedPriority, completeDate: completeDate, isfinish: true, viewContext: viewContext)
+//                    taskVM.notifId = taskVM.scheduleNotification(triggerDate: completeDate, content:"\(name) le \(completeDate) the due date of your task has arrived")
                     
                     dismiss()
                     

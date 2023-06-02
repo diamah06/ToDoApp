@@ -9,11 +9,13 @@ import SwiftUI
 
 struct UpdateTaskView: View {
     
-    @State var name: String = ""
-    @State var pitch: String=""
-    @State var selectedPriority: Priority = .urgent
-    @State var completeDate = Date.now
-    @State var isfinish: Bool = true
+    @State var name: String
+    @State var pitch: String
+    @State var selectedPriority: Priority
+    @State var completeDate : Date
+    @State var isfinish: Bool 
+
+    //var task : FetchedResults<Item>
     
     @ObservedObject var newItem : Item
     @Environment(\.dismiss) var dismiss
@@ -41,7 +43,9 @@ struct UpdateTaskView: View {
                         .font(.headline)
                         .foregroundColor(Color(hue: 0.1, saturation: 0.141, brightness: 0.972))
                         .accessibilityLabel("Label")){
+                           
                             TextField("New Task", text: $name)
+                            //TextField("\($vm.newItem.name)", text: $name)
                                 .textFieldStyle(.roundedBorder)
                         }
                         .accessibilityIdentifier("NewTaskTextField")
@@ -98,7 +102,7 @@ struct UpdateTaskView: View {
                 }.scrollContentBackground(.hidden)
                 Button {
                     
-                    vm.updateItem(item: newItem, name: name , pitch:pitch, selectedPriority: selectedPriority, completeDate: Date.now, isfinish: true, viewContext: viewContext)
+                    vm.updateItem(item: newItem, name: name , pitch:pitch, selectedPriority: selectedPriority, completeDate: completeDate, isfinish: true, viewContext: viewContext)
                     
                     
                     dismiss()
@@ -124,21 +128,21 @@ struct UpdateTaskView: View {
     }
 }
 
-struct UpdateTaskView_Previews: PreviewProvider {
-    static let persistence = PersistenceController.preview
-    static var item: Item = {
-        let context = persistence.container.viewContext
-        let item = Item(context: context)
-        item.completeDate = Date.now
-        item.priority = "urgent"
-        item.name = "name"
-        item.pitch = "pitch"
-        item.isfinish = true
-        return item
-    }()
+//struct UpdateTaskView_Previews: PreviewProvider {
+//    static let persistence = PersistenceController.preview
+//    static var item: Item = {
+//        let context = persistence.container.viewContext
+//        let item = Item(context: context)
+//        item.completeDate = Date.now
+//        item.priority = "urgent"
+//        item.name = "name"
+//        item.pitch = "pitch"
+//        item.isfinish = true
+//        return item
+//    }()
     
-    static var previews: some View {
-        UpdateTaskView(newItem: item)
-            .environment(\.managedObjectContext, persistence.container.viewContext)
-    }
-}
+//    static var previews: some View {
+//        UpdateTaskView(task: Item(), newItem: item)
+//            .environment(\.managedObjectContext, persistence.container.viewContext)
+//    }
+//}

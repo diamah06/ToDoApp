@@ -28,9 +28,14 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate, INotifica
         notificationCenter.add(request)
     }
 
+//    func removePendingNotification(id: String) {
+//        notificationCenter.removePendingNotificationRequests(withIdentifiers: [id])
+//    }
+    
     func removePendingNotification(id: String) {
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: [id])
-    }
+            notificationCenter.removeDeliveredNotifications(withIdentifiers: [id])
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: [id])
+        }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> ()) {
         completionHandler([.alert, .badge, .sound])
