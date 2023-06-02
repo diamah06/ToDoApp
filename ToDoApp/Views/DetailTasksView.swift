@@ -74,7 +74,7 @@ struct DetailTasksView: View {
                     
                // ShareLink(item: (newItem.name ?? ""))
                 
-                ShareLink(item: "Hey ! I share my new todo! \(String(describing: newItem.name)). It's \(String(describing: newItem.completeDate))")
+                ShareLink(item: "Hey 👋 ! I share with you this task! \(String(describing: newItem.name)). for \(String(describing: newItem.completeDate!.formatted(date: .complete, time: .standard))))")
                 
 //                    .swipeActions(edge: .leading) {
 //                        ShareLink(item: "Je te partage ma nouvelle Todo: \n\(newItem.name ?? "No title")\n\(newItem.completeDate, "No description")")
