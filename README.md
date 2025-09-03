@@ -8,8 +8,10 @@ L’idée est de rendre le suivi des tâches plus pratique tout en gardant un c�
 Installation & Exécution :
 
 1-Cloner le dépôt GitHub.
-git clone https://github.com/diamah06/ToDoApp
+```bash
+git clone https://github.com/diamah06/ToDoApp.git
 cd ToDoApp
+```
 
 
 2-Ouvrir le projet dans Xcode
